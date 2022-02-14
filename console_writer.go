@@ -417,12 +417,11 @@ func consoleDefaultFormatCaller(noColor bool) Formatter {
 		if len(c) > 0 {
 			if cwd, err := os.Getwd(); err == nil {
 				if rel, err := filepath.Rel(cwd, c); err == nil {
-					ss := strings.Split(cwd, string(filepath.Separator))
+					c = rel
+					ss := strings.Split(c, string(filepath.Separator))
 					ssl := len(ss)
-					if ssl > 0 {
-						c = ss[ssl-1] + "/" + rel
-					} else {
-						c = rel
+					if ssl > 1 {
+						c = ss[ssl-2] + "/" + ss[ssl-1]
 					}
 				}
 			}
