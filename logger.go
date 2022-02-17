@@ -38,7 +38,7 @@ type RZeroLogger struct {
 	label string
 }
 
-func newRZeroLogger(cfg loggerConfig) *RZeroLogger {
+func newRZeroLogger(cfg loggerPrepare) *RZeroLogger {
 	if err := cfg.fw.initBase(); err != nil {
 		panic(err)
 	}

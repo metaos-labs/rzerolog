@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-type loggerConfig struct {
+type loggerPrepare struct {
 	cw *ConsoleWriter
 	fw *LogFileWriter
 
@@ -15,7 +15,7 @@ type loggerConfig struct {
 	caller    bool
 }
 
-func defaultConfig() loggerConfig {
+func defaultConfig() loggerPrepare {
 	consoleWriter := &ConsoleWriter{
 		Enable:  true,
 		Out:     os.Stdout,
@@ -34,7 +34,7 @@ func defaultConfig() loggerConfig {
 		currentFileName: DefaultFileName,
 		file:            nil,
 	}
-	cfg := loggerConfig{
+	cfg := loggerPrepare{
 		cw:        consoleWriter,
 		fw:        fw,
 		level:     DefaultLevel,
@@ -45,9 +45,9 @@ func defaultConfig() loggerConfig {
 	return cfg
 }
 
-type Option func(cfg *loggerConfig)
+type Option func(cfg *loggerPrepare)
 
-func (lc *loggerConfig) apply(opts ...Option) {
+func (lc *loggerPrepare) apply(opts ...Option) {
 	for _, opt := range opts {
 		opt(lc)
 	}
@@ -55,35 +55,35 @@ func (lc *loggerConfig) apply(opts ...Option) {
 
 // WithLevel set logger level.
 func WithLevel(l Level) Option {
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.level = l
 	}
 }
 
 // DisableConsolePrint will disable console print.
 func DisableConsolePrint() Option {
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.cw.Enable = false
 	}
 }
 
 // WithNoConsolePrintColor will print console with no color font.
 func WithNoConsolePrintColor() Option {
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.cw.NoColor = true
 	}
 }
 
 // EnableLogFiles will make logger to write logs to log files.
 func EnableLogFiles() Option {
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.fw.enable = true
 	}
 }
 
 // WithLogFilePath set the path which log files will be written to.
 func WithLogFilePath(path string) Option {
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.fw.fillPath = path
 	}
 }
@@ -94,7 +94,7 @@ func WithLogFilePath(path string) Option {
 // eg:
 // "yyyyMMddHH.log" => "2022021116.log"
 func WithLogFileName(name string) Option {
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.fw.logFileName = name
 	}
 }
@@ -103,7 +103,7 @@ func WithLogFileName(name string) Option {
 // eg:
 // "yyyyMMddHH.log" => "2022021116.log"
 func EnableTimeRolling() Option {
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.fw.timeRolling = true
 		cfg.fw.enable = true
 	}
@@ -115,7 +115,7 @@ func EnableTimeRolling() Option {
 // the redundant old log files will be automatically removed.
 // NOTE: The unit of the filesize parameter is Kb.
 func WithSizeRolling(fileSize int64, maxFileCount int) Option {
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.fw.sizeRolling = true
 		cfg.fw.enable = true
 		cfg.fw.maxFileCount = maxFileCount
@@ -125,7 +125,7 @@ func WithSizeRolling(fileSize int64, maxFileCount int) Option {
 
 // WithNoCaller will prevent the logger caller information from printing.
 func WithNoCaller() Option {
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.caller = false
 	}
 }
@@ -141,7 +141,7 @@ func WithLogFormat(format string) Option {
 	default:
 		panic(fmt.Sprintln("unsupported log format. supporting:", LogFormatJSON, LogFormatConsoleText))
 	}
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.fw.writer = w
 	}
 }
@@ -150,7 +150,7 @@ func WithLogFormat(format string) Option {
 // The label will be print to log records automatically.
 // It is usually used to mark modules.
 func WithLabel(label string) Option {
-	return func(cfg *loggerConfig) {
+	return func(cfg *loggerPrepare) {
 		cfg.label = label
 	}
 }
